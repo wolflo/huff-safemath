@@ -1,0 +1,15 @@
+{
+  "name": "huff-safemath",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "node ./compile.js",
+    "test": "mocha ./huff_tests/ --trace-warnings --exit --colors --recursive --reporter spec"
+  },
+  "author": "nsward",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^6.1.4"
+  }
+}
