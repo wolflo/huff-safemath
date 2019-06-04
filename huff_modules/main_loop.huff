@@ -1,15 +1,5 @@
-#include './math.huff'
+#define macro MAIN__SAFEMATH = takes(0) returns(0) {}
 
-#define macro MAIN__SAFEMATH = takes(2) returns(1) {
-    // MATH__ADD<throw_error>()
-    MATH__SUB<throw_error>()
-
-    stop
-    throw_error:
-        0x00 0x00 revert
-}
-
-#define macro MAIN__CONSTRUCTOR = takes(0) returns(0) {
-}
+#define macro MAIN__CONSTRUCTOR = takes(0) returns(0) {}
 
 #define macro TEST_CONSTRUCTOR = takes(0) returns(0) {}
