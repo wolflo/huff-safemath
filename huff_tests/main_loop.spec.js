@@ -14,13 +14,13 @@ describe('tests', function describe() {
     main = new Runtime('main_loop.huff', pathToTestData, true);
   });
 
-  it('test runs', async () => {
+  it('adds two numbers', async () => {
     const calldata = [
-      { index: 0, value: new bn(1) },
-      { index: 32, value: new bn(2) },
+      // { index: 0, value: new bn(1) },
+      // { index: 32, value: new bn(2) },
     ];
     const initialMem = [];
-    const initialStack = [5, 3];
+    const initialStack = [3, 4];
     const callvalue = 0;
 
     const {

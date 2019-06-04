@@ -1,0 +1,26 @@
+// #include './constants.huff'
+
+template <throw_error_jump_label>
+#define macro MATH__ADD = takes(2) returns(1) {
+    // [ a b ]
+    dup2                        // [ b a b ]
+    add                         // [ (a+b) b ]
+    dup1                        // [ (a+b) (a+b) b ]
+    swap2                       // [ b (a+b) (a+b) ]
+    gt                          // [ (b>(a+b)) (a+b) ]
+    <throw_error_jump_label>    // [ throw_error_jump_label (a>(a+b)) (a+b) ]
+    jumpi                       // [ (a+b) ]
+}
+
+template <throw_error_jump_label>
+#define macro MATH__SUB = takes(2) returns(1) {
+    // sub -> a - b
+    // if (b>a) we have integer underflow - throw an error
+    // [ a b ]
+    dup1                        // [ a a b ]
+    dup3                        // [ b a a b ]
+    gt                          // [ (b>a) a b ]
+    <throw_error_jump_label>    // [ throw_error_jump_label (b>a) a b ]
+    jumpi                       // [ a b ]
+    sub                         // [ (a-b) ]
+}
