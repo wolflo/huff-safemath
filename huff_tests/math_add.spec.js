@@ -1,4 +1,4 @@
-const chai = require('chai');
+const chai = require('chai');;
 const path = require('path');
 const BN = require('bn.js');
 
@@ -7,15 +7,7 @@ const { Runtime } = require('../huff');
 const { expect } = chai;
 const pathToTestData = path.posix.resolve(__dirname, '../huff_modules');
 
-const testHelper = `
-#include "math.huff"
-#define macro MATH__ADD_IMPL = takes(2) returns(1) {
-  MATH__ADD<throw_error>()
-  stop
-  throw_error:
-    0x00 0x00 revert
-}
-`;
+const testHelper = require('./testHelper.js');
 
 describe('MATH__ADD', () => {
   let math;
