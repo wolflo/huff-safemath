@@ -1,5 +1,6 @@
 // #include './constants.huff'
 
+// check that b > (a + b), return (a + b)
 template <throw_error_jump_label>
 #define macro MATH__ADD = takes(2) returns(1) {
     // [ a b ]
@@ -12,10 +13,9 @@ template <throw_error_jump_label>
     jumpi                       // [ (a+b) ]
 }
 
+// check that b !> a, return (a - b)
 template <throw_error_jump_label>
 #define macro MATH__SUB = takes(2) returns(1) {
-    // sub -> a - b
-    // if (b>a) we have integer underflow - throw an error
     // [ a b ]
     dup1                        // [ a a b ]
     dup3                        // [ b a a b ]
@@ -24,3 +24,27 @@ template <throw_error_jump_label>
     jumpi                       // [ a b ]
     sub                         // [ (a-b) ]
 }
+
+// check that a == 0 OR (a * b)/b == a, return (x * y)
+template <throw_error_jump_label>
+#define macro MATH__MUL = takes(2) returns(1) {
+    // [ a b ]
+    dup2                        // [ b a b ]
+    dup2                        // [ a b a b]
+    mul                         // [ (a*b) a b ]
+
+    swap1                       // [ a (a*b) b ]
+    dup2                        // [ (a*b) a (a*b) b ]
+    div                         // [ (a*b/a) (a*b) b ]
+    dup3                        // [ b (a*b/a) (a*b) b ]
+    eq                          // [ (b==a*b/a) (a*b) b ]
+    dup3                        // [ b (b==a*b/a) (a*b) b ]
+    iszero                      // [ b==0 (b==a*b/a) (a*b) b ]
+    or                          // [ (b==0 || b==a*b/a) (a*b) b ]
+    iszero                      // [ !(b==0 || b==a*b/a) (a*b) b ]
+    <throw_error_jump_label>    // [ throw_error_jump_label !(b==0 || b==a*b/a) (a*b) b ]
+    jumpi                       // [ (a*b) b ]
+    swap1                       // [ b (a*b) ]
+    pop                         // [ (a*b) ]
+}
+
