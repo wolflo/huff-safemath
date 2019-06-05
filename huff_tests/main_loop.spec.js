@@ -13,7 +13,5 @@ describe('MAIN__SAFEMATH', () => {
     main = new Runtime('main_loop.huff', pathToTestData, true);
   });
 
-  it('exists', () => {
-
-  });
+  it('exists', () => {});
 });

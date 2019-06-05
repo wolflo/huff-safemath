@@ -1,50 +1,89 @@
 // #include './constants.huff'
 
+// stack: [ bottom top ]
+
 // check that b > (a + b), return (a + b)
 template <throw_error_jump_label>
 #define macro MATH__ADD = takes(2) returns(1) {
-    // [ a b ]
-    dup2                        // [ b a b ]
-    add                         // [ (a+b) b ]
-    dup1                        // [ (a+b) (a+b) b ]
-    swap2                       // [ b (a+b) (a+b) ]
-    gt                          // [ (b>(a+b)) (a+b) ]
-    <throw_error_jump_label>    // [ throw_error_jump_label (a>(a+b)) (a+b) ]
-    jumpi                       // [ (a+b) ]
+  // [ b a ]
+  dup2                      // [ b a b ]
+  add                       // [ b (a+b) ]
+  dup1                      // [ b (a+b) (a+b) ]
+  swap2                     // [ (a+b) (a+b) b ]
+  gt                        // [ (a+b) (b>(a+b)) ]
+  <throw_error_jump_label>  // [ (a+b) (b>(a+b)) throw_error_jump_label ]
+  jumpi                     // [ (a+b) ]
 }
+
 
 // check that b !> a, return (a - b)
 template <throw_error_jump_label>
 #define macro MATH__SUB = takes(2) returns(1) {
-    // [ a b ]
-    dup1                        // [ a a b ]
-    dup3                        // [ b a a b ]
-    gt                          // [ (b>a) a b ]
-    <throw_error_jump_label>    // [ throw_error_jump_label (b>a) a b ]
-    jumpi                       // [ a b ]
-    sub                         // [ (a-b) ]
+  // [ b a ]
+  dup1                      // [ b a a ]
+  dup3                      // [ b a a b ]
+  gt                        // [ b a (b>a) ]
+  <throw_error_jump_label>  // [ b a (b>a) throw_error_jump_label ]
+  jumpi                     // [ b a ]
+  sub                       // [ (a-b) ]
 }
 
-// check that a == 0 OR (a * b)/b == a, return (x * y)
+
+// fails when a == 0 ??
+// check that b == 0 OR (b * a)/a == b, return (x * y)
 template <throw_error_jump_label>
 #define macro MATH__MUL = takes(2) returns(1) {
-    // [ a b ]
-    dup2                        // [ b a b ]
-    dup2                        // [ a b a b]
-    mul                         // [ (a*b) a b ]
+  // [ b a ]
 
-    swap1                       // [ a (a*b) b ]
-    dup2                        // [ (a*b) a (a*b) b ]
-    div                         // [ (a*b/a) (a*b) b ]
-    dup3                        // [ b (a*b/a) (a*b) b ]
-    eq                          // [ (b==a*b/a) (a*b) b ]
-    dup3                        // [ b (b==a*b/a) (a*b) b ]
-    iszero                      // [ b==0 (b==a*b/a) (a*b) b ]
-    or                          // [ (b==0 || b==a*b/a) (a*b) b ]
-    iszero                      // [ !(b==0 || b==a*b/a) (a*b) b ]
-    <throw_error_jump_label>    // [ throw_error_jump_label !(b==0 || b==a*b/a) (a*b) b ]
-    jumpi                       // [ (a*b) b ]
-    swap1                       // [ b (a*b) ]
-    pop                         // [ (a*b) ]
+  dup2                      // [ b a b ]
+  dup2                      // [ b a b a ]
+  mul                       // [ b a (a*b) ]
+
+  dup2                      // [ b a (a*b) a ]
+  dup2                      // [ b a (a*b) a (a*b) ]
+  div                       // [ b a (a*b) (a*b/a) ]
+  dup4                      // [ b a (a*b) (a*b/a) b ]
+  eq                        // [ b a (a*b) (b==a*b/a) ]
+  dup3                      // [ b a (a*b) (b==a*b/a) a ]
+  iszero                    // [ b a (a*b) (b==a*b/a) (a==0) ]
+  or                        // [ b a (a*b) (b==a*b/a || a==0) ]
+  iszero                    // [ b a (a*b) !(b==a*b/a || a==0) ]
+  <throw_error_jump_label>  // [ b a (a*b) !(b==a*b/a || a==0) throw_error_jump_label ]
+  jumpi                     // [ b a (a*b) ]
+  swap1                     // [ b (a*b) a ]
+  pop                       // [ b (a*b) ]
+  swap1                     // [ (a*b) b ]
+  pop                       // [ (a*b) ]
+
+  // swap1                     // [ b (a*b) a ]
+  // dup2                      // [ b (a*b) a (a*b) ]
+  // div                       // [ b (a*b) (a*b/a) ]
+  // dup3                      // [ b (a*b) (a*b/a) b ]
+  // eq                        // [ b (a*b) (b==a*b/a) ]
+  // dup3                      // [ b (a*b) (b==a*b/a) b ]
+  // iszero                    // [ b (a*b) (b==a*b/a) (b==0) ]
+  // or                        // [ b (a*b) (b==0 || b==a*b/a) ]
+  // iszero                    // [ b (a*b) !(b==0 || b==a*b/a) ]
+  // <throw_error_jump_label>  // [ b (a*b) !(b==0 || b==a*b/a) throw_error_jump_label ]
+  // jumpi                     // [ b (a*b) ]
+  // swap1                     // [ (a*b) b ]
+  // pop                       // [ (a*b) ]
 }
 
+template <throw_error_jump_label>
+#define macro MATH__DIV = takes(2) returns(1) {
+  // [ b a ]
+  dup2                          // [ b a b ]
+  //todo: check b > 0 ?
+  iszero                        // [ b a (b==0) ]
+  <throw_error_jump_label>      // [ b a (b!=0) throw_error_jump_label ]
+  jumpi                         // [ b a ]
+  div                           // [ (a/b) ]
+}
+
+
+#define macro MATH__MIN = takes(2) returns(1) {}
+
+#define macro MATH__MAX = takes(2) returns(1) {}
+
+#define macro MATH__AVG = takes(1) returns(1) {}
