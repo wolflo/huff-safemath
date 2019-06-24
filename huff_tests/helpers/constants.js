@@ -7,4 +7,5 @@ module.exports = {
   SUB: 'MATH__SUB_IMPL',
   MUL: 'MATH__MUL_IMPL',
   DIV: 'MATH__DIV_IMPL',
+  MOD: 'MATH__MOD_IMPL',
 }

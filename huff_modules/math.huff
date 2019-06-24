@@ -81,13 +81,14 @@ template <throw_error_jump_label>
   div                           // [ (a/b) ]
 }
 
-#define macro MATH__MOD takes(2) returns (1) {
+template <throw_error_jump_label>
+#define macro MATH__MOD = takes(2) returns (1) {
   // [ b a ]
   dup2                          // [ b a b ]
   iszero                        // [ b a (b==0) ]
   <throw_error_jump_label>      // [ b a (b==0)  throw_error_jump_label ]
   jumpi                         // [ b a ]
-  mod
+  mod                           // [ (a % b)]
 }
 
 #define macro MATH__MIN = takes(2) returns(1) {

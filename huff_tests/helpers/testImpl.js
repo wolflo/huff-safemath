@@ -1,4 +1,4 @@
-const { ADD, SUB, MUL, DIV } = require('./constants.js');
+const { ADD, SUB, MUL, DIV, MOD } = require('./constants.js');
 
 module.exports = `
 #include "math.huff"
@@ -30,6 +30,13 @@ module.exports = `
 
 #define macro ${DIV} = takes(2) returns(1) {
   MATH__DIV<throw_error>()
+  stop
+  throw_error:
+    THROW()
+}
+
+# define macro ${MOD} = takes(2) returns(1) {
+  MATH__MOD<throw_error>()
   stop
   throw_error:
     THROW()

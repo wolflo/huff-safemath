@@ -12,6 +12,7 @@ const {
   SUB,
   MUL,
   DIV,
+  MOD,
 } = require('./helpers/constants.js');
 
 // todo: include tests with signed ints, other data
@@ -127,10 +128,33 @@ describe('MATH__DIV', () => {
   it('reverts on division by zero', async () => {
     const a = new BN('5678');
     const b = new BN('0');
-    const c = new BN('0');
 
     await testFailStackFn(math, DIV, [b, a], REVERT);
     // const divByZero = await executeStackFn(math, DIV, [b, a]);
     // console.log('divByZero', divByZero);
   });
+});
+
+describe('MATH__MOD', () => {
+  let math;
+  before(async () => {
+    math = new Runtime(testImpl, pathToTestData, true);
+  });
+
+  it('mods correctly', async () => {
+    const a = new BN('5678');
+    const b = new BN('6');
+    const c = a.mod(b);
+
+    console.log('5678 % 5 = ', c)
+
+    await testStackFn(math, MOD, [b, a], [c]);
+  });
+
+  it('reverts on mod by zero', async () => {
+    const a = new BN('5678');
+    const b = new BN('0');
+
+    await testFailStackFn(math, MOD, [b, a], REVERT);
+  })
 });
